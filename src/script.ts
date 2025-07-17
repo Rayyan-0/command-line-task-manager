@@ -13,7 +13,7 @@ function ask(question: string): Promise<string> {
   return new Promise(resolve => rl.question(question, answer => resolve(answer)));
 }
 
-enum stages {notComplete = "pending", inProgress = "active", taskCompleted = "complete"}
+enum stages {NotComplete = "pending", InProgress = "active", TaskCompleted = "completed", Archived = "archived"}
 
 type Task = {
   name: string | number;
@@ -38,7 +38,7 @@ console.log("press A to add a new task. V to see current tasks. E to edit task d
       const description = await ask("Describe your task: ");
       const isUrgent = (await ask("Urgent? true/false: ")).toLowerCase() === "true";
       const isImportant = (await ask("Important? true/false: ")).toLowerCase() === "true";
-      const status = stages.notComplete;
+      const status = stages.NotComplete;
 
       const newTask: Task = {
         name,
@@ -73,9 +73,28 @@ console.log("press A to add a new task. V to see current tasks. E to edit task d
 `);
       tasks.map(task => {
         console.log(`Name: ${task.name} Desc: ${task.description} isUrgent: ${task.isUrgent} / isImportant: ${task.isImportant} / status: ${task.status}
+          
 
 ==================================================
-`);});}
+
+`)})
+
+    let viewChoice = (await ask("To view only active tasks press 'A'. To view Archived tasks press 'AR'. To view only inactive tasks press 'P': ")).toLowerCase();
+    switch (viewChoice) {
+      case "a":
+        let activeTaskView = tasks.filter((task) => task.status == stages.InProgress)
+        console.log(activeTaskView)
+        break;
+      case "ar":
+        let archivedTaskView = tasks.filter((task) => task.status == stages.Archived)
+        console.log(archivedTaskView)
+      case "p":
+        let pendingTaskView = tasks.filter((task) => task.status == stages.NotComplete)
+        console.log(pendingTaskView)
+    }
+
+
+}
 
 
     if (input === "e") {
@@ -103,18 +122,21 @@ console.log("press A to add a new task. V to see current tasks. E to edit task d
                     matches[0].isImportant = newImportant
                     break;
                 case "status":
-                    let newStatus: number = parseInt((await ask("Please provide the new task status: 1 = pending, 2 = active, 3 = completed: ")));
+                    let newStatus: number = parseInt((await ask("Please provide the new task status: 1 = pending, 2 = active, 3 = completed, 4 = Archive: ")));
                     switch (newStatus) {
                       case 1:
-                        matches[0].status = stages.notComplete;
+                        matches[0].status = stages.NotComplete;
                         break;
                       case 2:
-                        matches[0].status = stages.inProgress;
+                        matches[0].status = stages.InProgress;
                         break;
                       case 3:
-                        case 3:
-                        matches[0].status = stages.taskCompleted;
+                        matches[0].status = stages.TaskCompleted;
                         break;
+                      case 4:
+                        matches[0].status = stages.Archived;
+                        break;
+ 
                     }
                   
             }
