@@ -22,11 +22,18 @@ type Task = {
   isImportant: boolean;
   status: stages;
 }
+
+const fileSave = require('fs');
+
+const saveData = (data: Task[]) => {
+  const jsonData = JSON.stringify(data);
+  fileSave.writefile('Tasks', jsonData)
+}
+
 let exit = false;
 const tasks: Task[] = [];
 
 console.log("press A to add a new task. V to see current tasks. E to edit task details and status. And exit to, well, exit.\n");
-
 (async function main() {
   while (!exit) {
 
@@ -155,6 +162,7 @@ console.log("press A to add a new task. V to see current tasks. E to edit task d
         }  
 
     if (input === "exit") {
+      saveData(tasks);
       exit = true;
       rl.close();}  
     
